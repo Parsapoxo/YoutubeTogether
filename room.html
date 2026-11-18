@@ -1,0 +1,8 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Room - YoutubeTogether</title><link rel="stylesheet" href="css/base.css"><link rel="stylesheet" href="css/room.css"></head><body>
+<div id="overlay"><h2>Ready to watch?</h2><p class="mut">Click to join (browsers need a click to allow playback).</p><button id="enter">Join room</button></div>
+<div class="wrap" style="max-width:1100px"><div class="row" style="justify-content:space-between"><h2><a href="home.html">◀</a> Room <b id="code"></b></h2><button id="copy" class="ghost">Copy invite link</button></div>
+<div id="status" class="mut"></div>
+<div class="layout"><div><div class="row" style="margin-bottom:12px"><input id="url" placeholder="Paste a YouTube link"><button id="load">Load</button></div><div class="player"><div id="player"></div></div></div>
+<div><div class="card"><h3>Watching (<span id="count">0</span>)</h3><div id="users"></div></div><div class="card"><h3>Invite friends</h3><div id="friends" class="mut">Join to see friends</div></div></div></div></div>
+<script src="https://www.youtube.com/iframe_api"></script><script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script><script type="module" src="js/room.js"></script></body></html>
