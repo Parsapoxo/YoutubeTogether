@@ -1,7 +1,6 @@
 # YoutubeTogether
-Watch YouTube videos in sync with friends. Static site (GitHub Pages) using the YouTube IFrame API and PeerJS (WebRTC).
+Watch YouTube videos in sync with friends. Static site (GitHub Pages) + Supabase (Auth, Postgres, Realtime).
 
-- `index.html` login/register, `home.html` friends + rooms, `room.html` watch room.
-- Accounts are stored locally in your browser; friends talk peer-to-peer, so both people must be online to send requests/invites.
-- A room lives as long as its host keeps the tab open.
-- Version lives in `js/version.js`; update `CHANGELOG.md` on every change.
+Setup: create a Supabase project, disable "Confirm email", run `sql/schema.sql` in the SQL Editor, and put the project URL / publishable key in `js/config.js`.
+
+Pages: `index.html` (login), `home.html` (friends, rooms, invites), `room.html` (watch room). Version lives in `js/version.js`; update `CHANGELOG.md` on every change.

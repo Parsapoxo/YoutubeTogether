@@ -1,47 +1,49 @@
 import { $, showVersion, toast, esc, randomCode, NAME_RE } from './common.js';
-import { requireUser, logout, loadData, saveData } from './auth.js';
-import { createPeer, contact, UP } from './net.js';
-const me = requireUser(); showVersion(); $('#me').textContent = me;
-const online = {}; let peer;
-$('#logout').onclick = () => { logout(); location.href = 'index.html'; };
-$('#create').onclick = () => (location.href = `room.html?code=${randomCode()}&host=1`);
-$('#join').onclick = () => { const c = $('#code').value.trim().toUpperCase(); c.length === 6 ? (location.href = 'room.html?code=' + c) : toast('Enter a 6-character room code'); };
-function setStatus(f, s) { const d = loadData(me); if (s) d.friends[f] = s; else delete d.friends[f]; saveData(me, d); render(); }
-function onMsg(c, d) {
-  const f = d && d.from; if (!NAME_RE.test(f || '')) return c.send({ t: 'ack' });
-  const fr = loadData(me).friends; let accepted = false;
-  if (d.t === 'req') { if (fr[f] === 'accepted' || fr[f] === 'out') { setStatus(f, 'accepted'); accepted = true; } else if (fr[f] !== 'in') { setStatus(f, 'in'); toast(`${f} sent you a friend request`); } }
-  else if (d.t === 'accept') { if (fr[f] === 'out') setStatus(f, 'accepted'); accepted = loadData(me).friends[f] === 'accepted'; }
-  else if (d.t === 'invite' && fr[f] === 'accepted' && /^[A-Z0-9]{6}$/.test(d.code)) toast(`${f} invited you to a room`, { href: 'room.html?code=' + d.code, text: 'Join' });
-  if (fr[f]) online[f] = Date.now(); c.send({ t: 'ack', accepted }); render();
-}
-async function refresh() {
-  for (const [f, s] of Object.entries(loadData(me).friends)) {
-    if (s === 'in') continue;
-    const r = await contact(peer, f, { t: s === 'out' ? 'req' : 'hello', from: me });
-    online[f] = r ? Date.now() : 0; if (r && s === 'out' && r.accepted) setStatus(f, 'accepted');
-  }
-  render();
-}
+import { requireUser, logout } from './auth.js';
+import { sb } from './supa.js';
+import { loadFriends, trackOnline } from './friends.js';
+showVersion(); const me = await requireUser(); $('#me').textContent = me.name;
+let friends = [], online = new Set();
+$('#logout').onclick = async () => { await logout(); location.href = 'index.html'; };
+$('#create').onclick = async () => {
+  for (let i = 0; i < 5; i++) { const code = randomCode(); const { error } = await sb.from('rooms').insert({ code, host: me.id }); if (!error) return (location.href = 'room.html?code=' + code); }
+  toast('Could not create a room');
+};
+$('#join').onclick = async () => {
+  const c = $('#code').value.trim().toUpperCase(); const { data } = await sb.from('rooms').select('code').eq('code', c).maybeSingle();
+  data ? (location.href = 'room.html?code=' + c) : toast('Room not found');
+};
 function render() {
-  const fr = Object.entries(loadData(me).friends);
-  $('#list').innerHTML = fr.length ? fr.map(([f, s]) => {
-    const on = online[f] > Date.now() - 40000;
-    const act = s === 'in' ? `<span><button data-a="acc" data-f="${f}">Accept</button> <button class="ghost" data-a="rm" data-f="${f}">Decline</button></span>`
-      : `<span>${s === 'out' ? '<span class="mut">Pending </span>' : ''}<button class="ghost" data-a="rm" data-f="${f}">Remove</button></span>`;
-    return `<div class="item"><span><span class="dot ${on ? 'on' : ''}"></span>${esc(f)} ${s === 'in' ? '<span class="mut">(wants to be friends)</span>' : ''}</span>${act}</div>`;
+  $('#list').innerHTML = friends.length ? friends.map((f) => {
+    const act = f.incoming ? `<span><button data-a="acc" data-id="${f.fid}">Accept</button> <button class="ghost" data-a="rm" data-id="${f.fid}">Decline</button></span>`
+      : `<span>${f.status === 'pending' ? '<span class="mut">Pending </span>' : ''}<button class="ghost" data-a="rm" data-id="${f.fid}">${f.status === 'pending' ? 'Cancel' : 'Remove'}</button></span>`;
+    return `<div class="item"><span><span class="dot ${online.has(f.id) ? 'on' : ''}"></span>${esc(f.name)} ${f.incoming ? '<span class="mut">(wants to be friends)</span>' : ''}</span>${act}</div>`;
   }).join('') : '<p class="mut">No friends yet.</p>';
 }
-$('#list').onclick = (e) => {
-  const b = e.target.closest('button'); if (!b) return; const f = b.dataset.f;
-  if (b.dataset.a === 'acc') { setStatus(f, 'accepted'); contact(peer, f, { t: 'accept', from: me }); } else if (confirm('Remove ' + f + '?')) setStatus(f, null);
+async function refresh() { friends = await loadFriends(me); render(); loadInvites(); }
+async function loadInvites() {
+  const since = new Date(Date.now() - 36e5).toISOString();
+  const { data } = await sb.from('invites').select('id,code,from_user').eq('to_user', me.id).gte('created_at', since); const inv = data || [];
+  $('#invcard').hidden = !inv.length;
+  $('#invites').innerHTML = inv.map((i) => `<div class="item"><span>${esc((friends.find((f) => f.id === i.from_user) || {}).name || 'A friend')} invited you to room <b>${esc(i.code)}</b></span><span><button data-a="join" data-id="${i.id}" data-code="${esc(i.code)}">Join</button> <button class="ghost" data-a="dis" data-id="${i.id}">Dismiss</button></span></div>`).join('');
+}
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('button[data-a]'); if (!b) return; const id = b.dataset.id;
+  if (b.dataset.a === 'acc') await sb.from('friendships').update({ status: 'accepted' }).eq('id', id);
+  else if (b.dataset.a === 'rm') { if (!confirm('Are you sure?')) return; await sb.from('friendships').delete().eq('id', id); }
+  else { await sb.from('invites').delete().eq('id', id); if (b.dataset.a === 'join') return (location.href = 'room.html?code=' + b.dataset.code); }
+  refresh();
+});
+$('#add').onclick = async () => {
+  const n = $('#fname').value.trim().toLowerCase(); if (!NAME_RE.test(n) || n === me.name) return toast('Enter a valid username');
+  const { data: p } = await sb.from('profiles').select('id').eq('username', n).maybeSingle(); if (!p) return toast('User not found');
+  const { error } = await sb.from('friendships').insert({ requester: me.id, addressee: p.id });
+  toast(error ? 'Already friends or a request exists' : 'Request sent'); $('#fname').value = ''; refresh();
 };
-$('#add').onclick = () => {
-  const f = $('#fname').value.trim().toLowerCase();
-  if (!NAME_RE.test(f) || f === me) return toast('Enter a valid username');
-  if (loadData(me).friends[f]) return toast('Already in your list');
-  setStatus(f, 'out'); $('#fname').value = ''; refresh(); toast('Request sent');
-};
-render();
-createPeer(UP + me).then((p) => { peer = p; p.on('connection', (c) => c.on('data', (d) => onMsg(c, d))); p.on('error', () => {}); refresh(); setInterval(refresh, 15000); })
-  .catch((e) => { $('#status').textContent = e.type === 'unavailable-id' ? 'This account is already open in another tab or device. Close it to use friends here.' : 'Could not reach the network (' + e.type + ')'; });
+sb.channel('db-' + me.id)
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships' }, refresh)
+  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'invites', filter: 'to_user=eq.' + me.id }, () => { toast('You got a room invite'); refresh(); })
+  .subscribe();
+trackOnline(me, (s) => { online = s; render(); });
+refresh();
+const jc = new URLSearchParams(location.search).get('join'); if (jc) location.href = 'room.html?code=' + jc.toUpperCase();

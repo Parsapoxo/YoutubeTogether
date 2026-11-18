@@ -1,8 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Home - YoutubeTogether</title><link rel="stylesheet" href="css/base.css"></head><body>
 <div class="wrap"><div class="row" style="justify-content:space-between"><h1>▶ YoutubeTogether</h1><div>Signed in as <b id="me"></b> <button id="logout" class="ghost">Log out</button></div></div>
-<div id="status" class="mut"></div>
+<div class="card" id="invcard" hidden><h2>Room invites</h2><div id="invites"></div></div>
 <div class="card"><h2>Rooms</h2><div class="row"><button id="create">Create a room</button><input id="code" maxlength="6" placeholder="Room code"><button id="join" class="ghost">Join</button></div></div>
-<div class="card"><h2>Friends</h2><div class="row"><input id="fname" placeholder="Add friend by username"><button id="add">Add</button></div><div id="list"></div>
-<p class="mut">Friend requests and invites are delivered peer-to-peer, so the other person must be online (on this site).</p></div></div>
-<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script><script type="module" src="js/home.js"></script></body></html>
+<div class="card"><h2>Friends</h2><div class="row"><input id="fname" placeholder="Add friend by username"><button id="add">Add</button></div><div id="list"></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.min.js"></script><script type="module" src="js/home.js"></script></body></html>
