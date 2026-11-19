@@ -47,3 +47,28 @@ sb.channel('db-' + me.id)
 trackOnline(me, (s) => { online = s; render(); });
 refresh();
 const jc = new URLSearchParams(location.search).get('join'); if (jc) location.href = 'room.html?code=' + jc.toUpperCase();
+
+// ---- Random video picks from the YouTubers list (edge function yt-feed) ----
+let all = [];
+const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+async function loadFeed() {
+  try { const c = JSON.parse(sessionStorage.getItem('ytt_feed') || 'null'); if (c && Date.now() - c.t < 6e5) return c.d; } catch (e) {}
+  const { data, error } = await sb.functions.invoke('yt-feed'); if (error || !data) throw new Error((error && error.message) || 'No data');
+  try { sessionStorage.setItem('ytt_feed', JSON.stringify({ t: Date.now(), d: data.channels })); } catch (e) {}
+  return data.channels;
+}
+function showVideos() {
+  const pick = shuffle(all.flatMap((c) => shuffle(c.videos.filter((v) => /^[\w-]{11}$/.test(v.id)).map((v) => ({ ...v, ch: c.name, av: c.avatar }))).slice(0, 2))).slice(0, 12);
+  $('#vstatus').textContent = pick.length ? '' : 'No videos could be loaded right now.';
+  $('#vids').innerHTML = pick.map((v) => `<article class="vid" data-v="${v.id}"><div class="th"><img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt=""><span class="play">▶</span></div><div class="meta">${v.av ? `<img class="av" src="${esc(v.av)}" alt="">` : ''}<div><p class="t">${esc(v.title)}</p><p class="c">${esc(v.ch)}</p></div></div></article>`).join('');
+}
+$('#shuffle').onclick = showVideos;
+$('#vids').onclick = async (e) => {
+  const c = e.target.closest('[data-v]'); if (!c || c.dataset.busy) return; c.dataset.busy = '1';
+  for (let i = 0; i < 5; i++) {
+    const code = randomCode(); const { error } = await sb.from('rooms').insert({ code, host: me.id, video_id: c.dataset.v, time: 0, playing: false, ts: Date.now() });
+    if (!error) return (location.href = 'room.html?code=' + code);
+  }
+  toast('Could not create a room'); delete c.dataset.busy;
+};
+try { all = await loadFeed(); showVideos(); } catch (e) { $('#vstatus').textContent = 'Could not load videos: ' + e.message; }

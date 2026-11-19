@@ -3,6 +3,14 @@
 All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning: [SemVer](https://semver.org/).
 
+## [0.5.0] - 2026-11-19
+### Changed
+- Redesigned the Home page: top navigation bar, hero section, two-column layout (videos + friends/invites), polished cards and hover effects.
+- Home now shows random videos from the YouTubers list (2 per channel, shuffled, with a Shuffle button); clicking one starts a room with that video.
+
+### Removed
+- Separate Browse page (`browse.html`), replaced by the Home page video picks.
+
 ## [0.4.0] - 2026-11-19
 ### Added
 - Live chat inside rooms (Realtime Broadcast). Messages are not stored: they only appear for people currently in the room.

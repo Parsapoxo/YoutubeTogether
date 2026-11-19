@@ -1,2 +1,2 @@
 // Single source of truth for the app version (SemVer). Keep in sync with CHANGELOG.md
-export const APP_VERSION = "0.4.0";
+export const APP_VERSION = "0.5.0";
