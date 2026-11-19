@@ -3,6 +3,10 @@
 All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning: [SemVer](https://semver.org/).
 
+## [0.4.0] - 2026-11-19
+### Added
+- Live chat inside rooms (Realtime Broadcast). Messages are not stored: they only appear for people currently in the room.
+
 ## [0.3.1] - 2026-11-19
 ### Changed
 - Browse page button renamed to "Youtube Together" to match the project name.

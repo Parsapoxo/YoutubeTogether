@@ -24,11 +24,12 @@ async function start() {
   await P.initPlayer('player', { play: (t) => local('play', t), pause: (t) => local('pause', t), seek: (t) => local('seek', t) });
   ch = sb.channel('room:' + code, { config: { presence: { key: me.id }, broadcast: { self: false } } });
   ch.on('broadcast', { event: 'sync' }, ({ payload }) => apply(payload));
+  ch.on('broadcast', { event: 'chat' }, ({ payload }) => payload && addMsg(String(payload.name || '?').slice(0, 20), String(payload.text || '').slice(0, 500), false));
   ch.on('presence', { event: 'sync' }, () => {
     const st = ch.presenceState(), ks = Object.keys(st).sort(); leader = ks[0] === me.id;
     $('#count').textContent = ks.length; $('#users').innerHTML = ks.map((k) => `<div class="item"><span><span class="dot on"></span>${esc(st[k][0].name)}</span></div>`).join('');
   });
-  ch.subscribe((s) => { if (s === 'SUBSCRIBED') { ch.track({ name: me.name }); status('Connected. The room stays open even if the host leaves.'); } });
+  ch.subscribe((s) => { if (s === 'SUBSCRIBED') { ch.track({ name: me.name }); status('Connected. The room stays open even if the host leaves.'); $('#chatin').disabled = false; $('#chatsend').disabled = false; } });
   const r = await getRoom();
   if (r && r.video_id) { P.load(r.video_id, r.time + (r.playing ? (Date.now() - r.ts) / 1000 : 0)); if (!r.playing) setTimeout(() => P.pause(r.time), 1500); }
   setInterval(() => { const s = P.state(); if (leader && s.id) send({ t: 'tick', ...s }); }, 5000);
@@ -43,3 +44,16 @@ $('#load').onclick = () => {
   const id = parseYouTubeId($('#url').value); if (!id) return toast('Invalid YouTube link'); if (!ch) return toast('Join the room first');
   P.load(id, 0); send({ t: 'video', id }); save({ video_id: id, time: 0, playing: true }); $('#url').value = '';
 };
+
+function addMsg(name, text, mine) {
+  const box = $('#msgs'), d = document.createElement('div'); d.className = 'msg' + (mine ? ' me' : '');
+  d.innerHTML = `<b>${esc(name)}:</b> ${esc(text)}`; box.appendChild(d);
+  while (box.children.length > 200) box.removeChild(box.firstChild);
+  box.scrollTop = box.scrollHeight;
+}
+function sendChat() {
+  const text = $('#chatin').value.trim(); if (!text || !ch) return;
+  ch.send({ type: 'broadcast', event: 'chat', payload: { name: me.name, text } }); addMsg(me.name, text, true); $('#chatin').value = '';
+}
+$('#chatsend').onclick = sendChat;
+$('#chatin').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChat(); });
