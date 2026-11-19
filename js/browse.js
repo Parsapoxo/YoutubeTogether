@@ -13,7 +13,7 @@ function render() {
   $('#chips').innerHTML = channels.map((c, i) => `<button class="chip ${i === sel ? 'on' : ''}" data-i="${i}">${c.avatar ? `<img src="${esc(c.avatar)}" alt="">` : ''}${esc(c.name)}</button>`).join('');
   const c = channels[sel], vids = (c.videos || []).filter((v) => /^[\w-]{11}$/.test(v.id));
   $('#status').textContent = vids.length ? '' : 'No videos could be loaded for this channel' + (c.error ? ' (' + c.error + ')' : '') + '.';
-  $('#grid').innerHTML = vids.map((v) => `<div class="vid"><img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt=""><div><p>${esc(v.title)}</p><button data-v="${v.id}">Watch together</button></div></div>`).join('');
+  $('#grid').innerHTML = vids.map((v) => `<div class="vid"><img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt=""><div><p>${esc(v.title)}</p><button data-v="${v.id}">Youtube Together</button></div></div>`).join('');
 }
 $('#chips').onclick = (e) => { const b = e.target.closest('button'); if (b) { sel = +b.dataset.i; render(); } };
 $('#grid').onclick = async (e) => {

@@ -3,9 +3,13 @@
 All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning: [SemVer](https://semver.org/).
 
+## [0.3.1] - 2026-11-19
+### Changed
+- Browse page button renamed to "Youtube Together" to match the project name.
+
 ## [0.3.0] - 2026-11-19
 ### Added
-- Browse page (`browse.html`): curated YouTubers (AriaKeoXer, KeoxerGame, TheUpsideDownByKeoxer, Kouman, DogmNabash, MrBeast) with their latest videos; "Watch together" creates a room with that video, then invite friends from the room.
+- Browse page (`browse.html`): curated YouTubers (AriaKeoXer, KeoxerGame, TheUpsideDownByKeoxer, Kouman, DogmNabash, MrBeast) with their latest videos; "Youtube Together" creates a room with that video, then invite friends from the room.
 - Supabase Edge Function `yt-feed` (source in `supabase/functions/yt-feed/`) that reads channel feeds from a fixed allow-list.
 - Link to the browse page on the home page.
 
