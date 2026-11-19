@@ -56,3 +56,11 @@ create policy "inv insert" on public.invites for insert to authenticated with ch
 create policy "inv delete" on public.invites for delete to authenticated using (to_user = auth.uid());
 
 alter publication supabase_realtime add table public.friendships, public.invites;
+
+-- Table privileges (required: new projects do not grant these automatically). RLS above restricts rows.
+revoke all on public.profiles, public.friendships, public.rooms, public.invites from anon, authenticated;
+grant select on public.profiles to authenticated;
+grant select, insert, update, delete on public.friendships to authenticated;
+grant select, insert, update on public.rooms to authenticated;
+grant select, insert, delete on public.invites to authenticated;
+grant usage, select on all sequences in schema public to authenticated;
