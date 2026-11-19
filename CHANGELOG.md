@@ -3,6 +3,10 @@
 All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning: [SemVer](https://semver.org/).
 
+## [0.2.1] - 2026-11-19
+### Fixed
+- Password field could not be typed into (keydown handler returned false and blocked input).
+
 ## [0.2.0] - 2026-11-18
 ### Added
 - Supabase backend: real accounts that work from any device (Supabase Auth, username mapped to a synthetic email).

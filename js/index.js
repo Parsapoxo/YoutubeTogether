@@ -8,4 +8,4 @@ async function submit() {
   try { if (!NAME_RE.test(n)) throw new Error('Username: 3-16 chars, a-z, 0-9, underscore'); await (reg ? register : login)(n, p); location.href = 'home.html'; }
   catch (e) { $('#msg').textContent = e.message; }
 }
-$('#go').onclick = submit; $('#pass').onkeydown = (e) => e.key === 'Enter' && submit();
+$('#go').onclick = submit; $('#pass').addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
