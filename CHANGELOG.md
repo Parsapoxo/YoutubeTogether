@@ -3,6 +3,10 @@
 All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning: [SemVer](https://semver.org/).
 
+## [0.7.1] - 2026-11-19
+### Changed
+- Removed the duplicate Profile item from the sidebar list; Profile is opened from the user block at the bottom of the sidebar (still a tab in the mobile bottom bar).
+
 ## [0.7.0] - 2026-11-19
 ### Added
 - My rooms page: rooms you host (with a Close button) and rooms you visited recently (remembered in this browser), with thumbnails and Join buttons.
