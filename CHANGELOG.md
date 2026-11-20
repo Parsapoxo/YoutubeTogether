@@ -3,6 +3,11 @@
 All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning: [SemVer](https://semver.org/).
 
+## [0.7.3] - 2026-11-20
+### Fixed
+- "Join room" overlay stayed on screen after clicking (the `hidden` attribute was overridden by CSS). Added a global `[hidden]` rule, which also fixes other hidden elements (badges, notices).
+- Room now shows a clear message if the realtime connection fails.
+
 ## [0.7.2] - 2026-11-19
 ### Fixed
 - Page flicker when switching between pages: sidebar and tab bar are now static HTML (name, avatar and badge come from a local cache first), theme is applied before first paint, and smooth page transitions are enabled.

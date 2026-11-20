@@ -38,7 +38,7 @@ async function start() {
     const st = ch.presenceState(), ks = Object.keys(st).sort(); leader = ks[0] === me.id; $('#count').textContent = ks.length;
     $('#users').innerHTML = ks.map((k) => `<div class="row" style="padding:5px 0">${av(st[k][0].name, 'on')}<span>${esc(st[k][0].name)}${k === me.id ? ' (you)' : ''}</span></div>`).join('');
   });
-  ch.subscribe((s) => { if (s === 'SUBSCRIBED') { ch.track({ name: me.name }); status(''); $('#chatin').disabled = false; $('#chatsend').disabled = false; } });
+  ch.subscribe((s, err) => { if (s !== 'SUBSCRIBED' && s !== 'CLOSED') status(`Realtime connection problem (${s}${err && err.message ? ': ' + err.message : ''}). Reload the page.`); if (s === 'SUBSCRIBED') { ch.track({ name: me.name }); status(''); $('#chatin').disabled = false; $('#chatsend').disabled = false; } });
   const r = await getRoom();
   if (r && r.video_id) { P.load(r.video_id, r.time + (r.playing ? (Date.now() - r.ts) / 1000 : 0)); if (!r.playing) setTimeout(() => P.pause(r.time), 1500); }
   setInterval(() => { const s = P.state(); if (leader && s.id) send({ t: 'tick', ...s }); }, 5000);

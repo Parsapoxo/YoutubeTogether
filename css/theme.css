@@ -77,3 +77,5 @@ a.nb,.btn{text-decoration:none}a.nb{color:var(--mu)}a.nb.on,a.nb:hover{color:var
 nav{view-transition-name:sidenav}.bt{view-transition-name:tabbar}
 ::view-transition-group(root){animation-duration:.15s}
 .hero h1{min-height:34px}
+
+[hidden]{display:none!important}
