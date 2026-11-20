@@ -64,3 +64,7 @@ grant select, insert, update, delete on public.friendships to authenticated;
 grant select, insert, update on public.rooms to authenticated;
 grant select, insert, delete on public.invites to authenticated;
 grant usage, select on all sequences in schema public to authenticated;
+
+-- Hosts can close (delete) their own rooms.
+grant delete on public.rooms to authenticated;
+create policy "rooms delete" on public.rooms for delete to authenticated using (host = auth.uid());

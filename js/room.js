@@ -9,6 +9,7 @@ const me = await initShell(''); $('#code').textContent = code;
 const status = (s) => { $('#status').hidden = !s; $('#status').textContent = s; };
 const getRoom = async () => (await sb.from('rooms').select('*').eq('code', code).maybeSingle()).data;
 if (!(await getRoom())) { $('#overlay').hidden = true; status('Room not found. Go back to the home page.'); throw new Error('no room'); }
+try { const r = JSON.parse(localStorage.getItem('ytt_recent') || '[]').filter((c) => c !== code); r.unshift(code); localStorage.setItem('ytt_recent', JSON.stringify(r.slice(0, 12))); } catch (e) {}
 let ch, leader = false;
 $('#copy').onclick = () => { navigator.clipboard.writeText(`${location.origin}${location.pathname.replace('room.html', '')}home.html?join=${code}`); toast('Invite link copied'); };
 $('#enter').onclick = start;

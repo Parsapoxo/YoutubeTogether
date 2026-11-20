@@ -2,7 +2,7 @@ import { $, showVersion, toast, av, esc } from './common.js';
 import { requireUser } from './auth.js';
 import { sb } from './supa.js';
 import { trackOnline } from './friends.js';
-const NAV = [['home.html', 'Home', '⌂'], ['friends.html', 'Friends', '☺'], ['notifications.html', 'Notifications', '🔔'], ['profile.html', 'Profile', '●']];
+const NAV = [['home.html', 'Home', '⌂'], ['my-rooms.html', 'My rooms', '▣'], ['friends.html', 'Friends', '☺'], ['notifications.html', 'Notifications', '🔔'], ['profile.html', 'Profile', '●']];
 export async function initShell(active) {
   const me = await requireUser(); showVersion();
   const link = ([h, l, i], c) => `<a class="${c}${h === active ? ' on' : ''}" href="${h}"><span>${i}</span>${l}${h === 'notifications.html' ? '<span class="bd bdg" hidden></span>' : ''}</a>`;

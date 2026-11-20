@@ -3,6 +3,11 @@
 All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning: [SemVer](https://semver.org/).
 
+## [0.7.0] - 2026-11-19
+### Added
+- My rooms page: rooms you host (with a Close button) and rooms you visited recently (remembered in this browser), with thumbnails and Join buttons.
+- Navigation item for My rooms; hosts can now delete their own rooms (RLS policy in `sql/schema.sql`).
+
 ## [0.6.0] - 2026-11-19
 ### Changed
 - Full redesign using the VibeRoom template: sidebar navigation (bottom tab bar on mobile), dark/light theme, hero, video strips, cards, modals.
