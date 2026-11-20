@@ -72,3 +72,8 @@ a.nb,.btn{text-decoration:none}a.nb{color:var(--mu)}a.nb.on,a.nb:hover{color:var
 #toast a{color:#fff;margin-left:10px;font-weight:600}
 .page-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:26px}.page-h h2{margin:0}
 @media(max-width:860px){.ver{bottom:62px}}
+
+@view-transition{navigation:auto}
+nav{view-transition-name:sidenav}.bt{view-transition-name:tabbar}
+::view-transition-group(root){animation-duration:.15s}
+.hero h1{min-height:34px}

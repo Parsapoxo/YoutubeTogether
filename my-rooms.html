@@ -1,7 +1,7 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>My rooms - YoutubeTogether</title><link rel="stylesheet" href="css/theme.css"></head><body>
-<div id="app"><nav id="nav"></nav><main>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>My rooms - YoutubeTogether</title><script>try{var t=localStorage.getItem('ytt_theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="css/theme.css"></head><body>
+<div id="app"><nav id="nav"><div class="logo">Youtube<i>Together</i></div><a class="nb" href="home.html"><span>⌂</span>Home</a><a class="nb on" href="my-rooms.html"><span>▣</span>My rooms</a><a class="nb" href="friends.html"><span>☺</span>Friends</a><a class="nb" href="notifications.html"><span>🔔</span>Notifications<span class="bd bdg" hidden></span></a><a class="me nb" href="profile.html" id="meblock"></a></nav><main>
 <h1>My rooms</h1><div class="mu">Rooms you host or visited recently.</div>
 <div id="list"><div class="sk" style="margin-top:14px"></div></div>
 <p><button class="btn p" id="new">Create a room</button></p>
-</main></div><div id="bt" class="bt"></div>
+</main></div><div id="bt" class="bt"><a class="" href="home.html"><span>⌂</span>Home</a><a class="on" href="my-rooms.html"><span>▣</span>My rooms</a><a class="" href="friends.html"><span>☺</span>Friends</a><a class="" href="notifications.html"><span>🔔</span>Notifications<span class="bd bdg" hidden></span></a><a class="" href="profile.html"><span>●</span>Profile</a></div><script>try{var m=localStorage.getItem('ytt_me');if(m)document.getElementById('meblock').innerHTML=m;var b=+localStorage.getItem('ytt_badge');if(b)document.querySelectorAll('.bdg').forEach(function(e){e.hidden=false;e.textContent=b})}catch(e){}</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.min.js"></script><script type="module" src="js/my-rooms.js"></script></body></html>

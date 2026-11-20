@@ -8,4 +8,4 @@ $('#pf').innerHTML = `<div class="row"><div class="av" style="background:var(--a
 <h2>Settings</h2><div class="card cb" style="max-width:560px;cursor:default"><div class="sw">Theme<select class="in" id="theme"><option value="auto" ${t === 'auto' ? 'selected' : ''}>System</option><option value="dark" ${t === 'dark' ? 'selected' : ''}>Dark</option><option value="light" ${t === 'light' ? 'selected' : ''}>Light</option></select></div>
 <div class="sw">Account<button class="btn d s" id="out">Log out</button></div></div>`;
 $('#theme').onchange = (e) => { const v = e.target.value; if (v === 'auto') { localStorage.removeItem('ytt_theme'); delete document.documentElement.dataset.theme; } else { localStorage.setItem('ytt_theme', v); document.documentElement.dataset.theme = v; } };
-$('#out').onclick = async () => { await logout(); location.href = 'index.html'; };
+$('#out').onclick = async () => { await logout(); localStorage.removeItem('ytt_me'); localStorage.removeItem('ytt_badge'); location.href = 'index.html'; };

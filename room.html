@@ -1,5 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Room - YoutubeTogether</title><link rel="stylesheet" href="css/theme.css"></head><body>
-<div id="app"><nav id="nav"></nav><main>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Room - YoutubeTogether</title><script>try{var t=localStorage.getItem('ytt_theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="css/theme.css"></head><body>
+<div id="app"><nav id="nav"><div class="logo">Youtube<i>Together</i></div><a class="nb" href="home.html"><span>⌂</span>Home</a><a class="nb" href="my-rooms.html"><span>▣</span>My rooms</a><a class="nb" href="friends.html"><span>☺</span>Friends</a><a class="nb" href="notifications.html"><span>🔔</span>Notifications<span class="bd bdg" hidden></span></a><a class="me nb" href="profile.html" id="meblock"></a></nav><main>
 <div id="status" class="note" hidden></div>
 <div class="room"><div class="rl"><div class="row"><div style="flex:1;min-width:0"><b style="font-size:18px">Room <span id="code"></span></b></div><button class="btn s" id="copy">Copy invite link</button><button class="btn p s" id="invite">Invite</button><a class="btn d s" href="home.html">Leave</a></div>
 <div class="pl"><div id="player"></div></div>
@@ -8,5 +8,5 @@
 <div class="pn" style="flex:1"><b>Live chat</b><div class="chat" id="msgs"></div><div class="row" style="flex-wrap:nowrap"><input class="in" id="chatin" maxlength="500" placeholder="Message the room" style="flex:1" disabled><button class="btn p s" id="chatsend" disabled>Send</button></div></div></div></div>
 <div class="modal" id="overlay"><div class="md" style="text-align:center"><b style="font-size:18px">Ready to watch?</b><div class="mu">Click to join (browsers need a click to allow playback).</div><button class="btn p" id="enter">Join room</button></div></div>
 <script src="https://www.youtube.com/iframe_api"></script>
-</main></div><div id="bt" class="bt"></div>
+</main></div><div id="bt" class="bt"><a class="" href="home.html"><span>⌂</span>Home</a><a class="" href="my-rooms.html"><span>▣</span>My rooms</a><a class="" href="friends.html"><span>☺</span>Friends</a><a class="" href="notifications.html"><span>🔔</span>Notifications<span class="bd bdg" hidden></span></a><a class="" href="profile.html"><span>●</span>Profile</a></div><script>try{var m=localStorage.getItem('ytt_me');if(m)document.getElementById('meblock').innerHTML=m;var b=+localStorage.getItem('ytt_badge');if(b)document.querySelectorAll('.bdg').forEach(function(e){e.hidden=false;e.textContent=b})}catch(e){}</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.min.js"></script><script type="module" src="js/room.js"></script></body></html>

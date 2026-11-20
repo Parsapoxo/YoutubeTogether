@@ -3,6 +3,10 @@
 All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning: [SemVer](https://semver.org/).
 
+## [0.7.2] - 2026-11-19
+### Fixed
+- Page flicker when switching between pages: sidebar and tab bar are now static HTML (name, avatar and badge come from a local cache first), theme is applied before first paint, and smooth page transitions are enabled.
+
 ## [0.7.1] - 2026-11-19
 ### Changed
 - Removed the duplicate Profile item from the sidebar list; Profile is opened from the user block at the bottom of the sidebar (still a tab in the mobile bottom bar).
