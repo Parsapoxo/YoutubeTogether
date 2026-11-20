@@ -1,8 +1,12 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Room - YoutubeTogether</title><link rel="stylesheet" href="css/base.css"><link rel="stylesheet" href="css/room.css"></head><body>
-<div id="overlay"><h2>Ready to watch?</h2><p class="mut">Click to join (browsers need a click to allow playback).</p><button id="enter">Join room</button></div>
-<div class="wrap" style="max-width:1100px"><div class="row" style="justify-content:space-between"><h2><a href="home.html">◀</a> Room <b id="code"></b></h2><button id="copy" class="ghost">Copy invite link</button></div>
-<div id="status" class="mut"></div>
-<div class="layout"><div><div class="row" style="margin-bottom:12px"><input id="url" placeholder="Paste a YouTube link"><button id="load">Load</button></div><div class="player"><div id="player"></div></div></div>
-<div><div class="card"><h3>Watching (<span id="count">0</span>)</h3><div id="users"></div></div><div class="card chat"><h3>Chat</h3><div id="msgs"></div><div class="row"><input id="chatin" maxlength="500" placeholder="Type a message..." disabled><button id="chatsend" disabled>Send</button></div></div><div class="card"><h3>Invite friends</h3><div id="friends" class="mut"></div></div></div></div></div>
-<script src="https://www.youtube.com/iframe_api"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.min.js"></script><script type="module" src="js/room.js"></script></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Room - YoutubeTogether</title><link rel="stylesheet" href="css/theme.css"></head><body>
+<div id="app"><nav id="nav"></nav><main>
+<div id="status" class="note" hidden></div>
+<div class="room"><div class="rl"><div class="row"><div style="flex:1;min-width:0"><b style="font-size:18px">Room <span id="code"></span></b></div><button class="btn s" id="copy">Copy invite link</button><button class="btn p s" id="invite">Invite</button><a class="btn d s" href="home.html">Leave</a></div>
+<div class="pl"><div id="player"></div></div>
+<div class="row"><input class="in" id="url" style="flex:1" placeholder="Paste a YouTube link"><button class="btn p" id="load">Load</button></div></div>
+<div class="rr"><div class="pn"><b>In the room (<span id="count">0</span>)</b><div id="users"></div></div>
+<div class="pn" style="flex:1"><b>Live chat</b><div class="chat" id="msgs"></div><div class="row" style="flex-wrap:nowrap"><input class="in" id="chatin" maxlength="500" placeholder="Message the room" style="flex:1" disabled><button class="btn p s" id="chatsend" disabled>Send</button></div></div></div></div>
+<div class="modal" id="overlay"><div class="md" style="text-align:center"><b style="font-size:18px">Ready to watch?</b><div class="mu">Click to join (browsers need a click to allow playback).</div><button class="btn p" id="enter">Join room</button></div></div>
+<script src="https://www.youtube.com/iframe_api"></script>
+</main></div><div id="bt" class="bt"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.min.js"></script><script type="module" src="js/room.js"></script></body></html>

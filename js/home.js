@@ -1,55 +1,14 @@
-import { $, showVersion, toast, esc, randomCode, NAME_RE } from './common.js';
-import { requireUser, logout } from './auth.js';
+import { $, esc, toast, parseYouTubeId } from './common.js';
+import { initShell } from './shell.js';
 import { sb } from './supa.js';
-import { loadFriends, trackOnline } from './friends.js';
-showVersion(); const me = await requireUser(); $('#me').textContent = me.name;
-let friends = [], online = new Set();
-$('#logout').onclick = async () => { await logout(); location.href = 'index.html'; };
-$('#create').onclick = async () => {
-  for (let i = 0; i < 5; i++) { const code = randomCode(); const { error } = await sb.from('rooms').insert({ code, host: me.id }); if (!error) return (location.href = 'room.html?code=' + code); }
-  toast('Could not create a room');
-};
-$('#join').onclick = async () => {
-  const c = $('#code').value.trim().toUpperCase(); const { data } = await sb.from('rooms').select('code').eq('code', c).maybeSingle();
-  data ? (location.href = 'room.html?code=' + c) : toast('Room not found');
-};
-function render() {
-  $('#list').innerHTML = friends.length ? friends.map((f) => {
-    const act = f.incoming ? `<span><button data-a="acc" data-id="${f.fid}">Accept</button> <button class="ghost" data-a="rm" data-id="${f.fid}">Decline</button></span>`
-      : `<span>${f.status === 'pending' ? '<span class="mut">Pending </span>' : ''}<button class="ghost" data-a="rm" data-id="${f.fid}">${f.status === 'pending' ? 'Cancel' : 'Remove'}</button></span>`;
-    return `<div class="item"><span><span class="dot ${online.has(f.id) ? 'on' : ''}"></span>${esc(f.name)} ${f.incoming ? '<span class="mut">(wants to be friends)</span>' : ''}</span>${act}</div>`;
-  }).join('') : '<p class="mut">No friends yet.</p>';
-}
-async function refresh() { friends = await loadFriends(me); render(); loadInvites(); }
-async function loadInvites() {
-  const since = new Date(Date.now() - 36e5).toISOString();
-  const { data } = await sb.from('invites').select('id,code,from_user').eq('to_user', me.id).gte('created_at', since); const inv = data || [];
-  $('#invcard').hidden = !inv.length;
-  $('#invites').innerHTML = inv.map((i) => `<div class="item"><span>${esc((friends.find((f) => f.id === i.from_user) || {}).name || 'A friend')} invited you to room <b>${esc(i.code)}</b></span><span><button data-a="join" data-id="${i.id}" data-code="${esc(i.code)}">Join</button> <button class="ghost" data-a="dis" data-id="${i.id}">Dismiss</button></span></div>`).join('');
-}
-document.addEventListener('click', async (e) => {
-  const b = e.target.closest('button[data-a]'); if (!b) return; const id = b.dataset.id;
-  if (b.dataset.a === 'acc') await sb.from('friendships').update({ status: 'accepted' }).eq('id', id);
-  else if (b.dataset.a === 'rm') { if (!confirm('Are you sure?')) return; await sb.from('friendships').delete().eq('id', id); }
-  else { await sb.from('invites').delete().eq('id', id); if (b.dataset.a === 'join') return (location.href = 'room.html?code=' + b.dataset.code); }
-  refresh();
-});
-$('#add').onclick = async () => {
-  const n = $('#fname').value.trim().toLowerCase(); if (!NAME_RE.test(n) || n === me.name) return toast('Enter a valid username');
-  const { data: p } = await sb.from('profiles').select('id').eq('username', n).maybeSingle(); if (!p) return toast('User not found');
-  const { error } = await sb.from('friendships').insert({ requester: me.id, addressee: p.id });
-  toast(error ? 'Already friends or a request exists' : 'Request sent'); $('#fname').value = ''; refresh();
-};
-sb.channel('db-' + me.id)
-  .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships' }, refresh)
-  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'invites', filter: 'to_user=eq.' + me.id }, () => { toast('You got a room invite'); refresh(); })
-  .subscribe();
-trackOnline(me, (s) => { online = s; render(); });
-refresh();
+import { createRoom, roomExists } from './rooms.js';
+const me = await initShell('home.html');
+const h = new Date().getHours(); $('#greet').textContent = `${h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'}, ${me.name}`;
 const jc = new URLSearchParams(location.search).get('join'); if (jc) location.href = 'room.html?code=' + jc.toUpperCase();
-
-// ---- Random video picks from the YouTubers list (edge function yt-feed) ----
-let all = [];
+const mk = async (v) => { if (!(await createRoom(me, v))) toast('Could not create a room'); };
+$('#create').onclick = () => mk();
+$('#join').onclick = async () => { const c = $('#code').value.trim().toUpperCase(); (await roomExists(c)) ? (location.href = 'room.html?code=' + c) : toast('Room not found'); };
+$('#go').onclick = () => { const v = parseYouTubeId($('#url').value); $('#urlerr').textContent = v ? '' : 'That doesn’t look like a YouTube link.'; if (v) mk(v); };
 const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 async function loadFeed() {
   try { const c = JSON.parse(sessionStorage.getItem('ytt_feed') || 'null'); if (c && Date.now() - c.t < 6e5) return c.d; } catch (e) {}
@@ -57,18 +16,13 @@ async function loadFeed() {
   try { sessionStorage.setItem('ytt_feed', JSON.stringify({ t: Date.now(), d: data.channels })); } catch (e) {}
   return data.channels;
 }
-function showVideos() {
-  const pick = shuffle(all.flatMap((c) => shuffle(c.videos.filter((v) => /^[\w-]{11}$/.test(v.id)).map((v) => ({ ...v, ch: c.name, av: c.avatar }))).slice(0, 2))).slice(0, 12);
-  $('#vstatus').textContent = pick.length ? '' : 'No videos could be loaded right now.';
-  $('#vids').innerHTML = pick.map((v) => `<article class="vid" data-v="${v.id}"><div class="th"><img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt=""><span class="play">▶</span></div><div class="meta">${v.av ? `<img class="av" src="${esc(v.av)}" alt="">` : ''}<div><p class="t">${esc(v.title)}</p><p class="c">${esc(v.ch)}</p></div></div></article>`).join('');
+const card = (v) => `<div class="card" data-v="${v.id}"><div class="th"><img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt=""><span class="pi">▶</span></div><div class="hv"><button class="btn p s">Youtube Together</button></div><div class="cb"><b>${esc(v.title)}</b><span class="mu">${esc(v.ch)}</span></div></div>`;
+let all = [];
+function render() {
+  const ok = (c) => c.videos.filter((v) => /^[\w-]{11}$/.test(v.id)).map((v) => ({ ...v, ch: c.name }));
+  const picks = shuffle(all.flatMap((c) => shuffle(ok(c)).slice(0, 2)));
+  $('#feed').innerHTML = (picks.length ? `<div class="page-h"><h2>Random picks</h2><button class="btn s" id="shuffle">↻ Shuffle</button></div><div class="strip" style="margin-top:12px">${picks.map(card).join('')}</div>` : '<div class="em">No videos could be loaded right now.</div>')
+    + all.map((c) => ({ c, l: shuffle(ok(c)).slice(0, 8) })).filter((x) => x.l.length).map((x) => `<h2>${esc(x.c.name)}</h2><div class="strip">${x.l.map(card).join('')}</div>`).join('');
 }
-$('#shuffle').onclick = showVideos;
-$('#vids').onclick = async (e) => {
-  const c = e.target.closest('[data-v]'); if (!c || c.dataset.busy) return; c.dataset.busy = '1';
-  for (let i = 0; i < 5; i++) {
-    const code = randomCode(); const { error } = await sb.from('rooms').insert({ code, host: me.id, video_id: c.dataset.v, time: 0, playing: false, ts: Date.now() });
-    if (!error) return (location.href = 'room.html?code=' + code);
-  }
-  toast('Could not create a room'); delete c.dataset.busy;
-};
-try { all = await loadFeed(); showVideos(); } catch (e) { $('#vstatus').textContent = 'Could not load videos: ' + e.message; }
+$('#feed').onclick = (e) => { if (e.target.closest('#shuffle')) return render(); const c = e.target.closest('[data-v]'); if (c) mk(c.dataset.v); };
+try { all = await loadFeed(); render(); } catch (e) { $('#feed').innerHTML = `<div class="em">Could not load videos: ${esc(e.message)}</div>`; }

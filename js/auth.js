@@ -14,5 +14,9 @@ export async function getUser() {
   const { data } = await sb.auth.getSession(); const u = data.session && data.session.user;
   return u ? { id: u.id, name: u.user_metadata.username } : null;
 }
-export async function requireUser() { const u = await getUser(); if (!u) location.href = 'index.html'; return u; }
+export async function requireUser() {
+  const u = await getUser();
+  if (!u) { sessionStorage.setItem('ytt_next', location.pathname.split('/').pop() + location.search); location.href = 'index.html'; }
+  return u;
+}
 export const logout = () => sb.auth.signOut();

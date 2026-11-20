@@ -1,11 +1,8 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Home - YoutubeTogether</title><link rel="stylesheet" href="css/base.css"><link rel="stylesheet" href="css/home.css"></head><body>
-<div class="nav"><div class="in"><a class="logo" href="home.html">▶ Youtube<span>Together</span></a><div class="row"><span class="mut">Signed in as <b id="me"></b></span><button id="logout" class="ghost">Log out</button></div></div></div>
-<div class="home"><main>
-<div class="hero"><h1>Watch together, in sync.</h1><p>Pick a video below, start a room, then invite your friends.</p>
-<div class="bar"><button id="create" class="ghost">New empty room</button><input id="code" maxlength="6" placeholder="ROOM CODE"><button id="join">Join room</button></div></div>
-<div class="sec-h"><h2>Picked for you</h2><button id="shuffle" class="ghost">↻ Shuffle</button></div>
-<div id="vstatus" class="mut">Loading videos...</div><div id="vids" class="vgrid"></div></main>
-<aside class="side"><div class="card" id="invcard" hidden><h2>Room invites</h2><div id="invites"></div></div>
-<div class="card"><h2>Friends</h2><div class="row"><input id="fname" placeholder="Add friend by username"><button id="add">Add</button></div><div id="list"></div></div></aside></div>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Home - YoutubeTogether</title><link rel="stylesheet" href="css/theme.css"></head><body>
+<div id="app"><nav id="nav"></nav><main>
+<div class="hero"><h1 id="greet"></h1><p class="mu" style="max-width:520px;margin:0 0 16px">Press play once and everyone in the room watches with you. Pauses, seeks and chat stay in step.</p>
+<div class="row"><button class="btn p" id="create">New room</button><input class="in" id="code" maxlength="6" placeholder="Room code" style="text-transform:uppercase;width:130px"><button class="btn" id="join">Join a room</button></div></div>
+<h2>Paste a YouTube link</h2><div class="row"><input class="in" id="url" style="flex:1;min-width:200px" placeholder="youtube.com/watch?v=… · youtu.be/… · youtube.com/shorts/…"><button class="btn p" id="go">Start room</button></div><p id="urlerr" class="err"></p>
+<div id="feed"><div class="sk"></div></div>
+</main></div><div id="bt" class="bt"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.min.js"></script><script type="module" src="js/home.js"></script></body></html>

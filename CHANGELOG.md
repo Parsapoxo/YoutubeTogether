@@ -3,6 +3,17 @@
 All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning: [SemVer](https://semver.org/).
 
+## [0.6.0] - 2026-11-19
+### Changed
+- Full redesign using the VibeRoom template: sidebar navigation (bottom tab bar on mobile), dark/light theme, hero, video strips, cards, modals.
+- Pages: Home, Friends (My friends / Online / Pending / Sent), Notifications (friend requests + room invites), Profile (theme, log out), Room (player, participants, chat, invite modal).
+- Home shows random picks plus one strip per YouTuber; clicking a video starts a room with it. You can also paste a YouTube link to start a room.
+- Login now returns you to the page you were opening (e.g. an invite link).
+- Shared CSS is now `css/theme.css`; navigation is built by `js/shell.js`.
+
+### Removed
+- Old per-page stylesheets.
+
 ## [0.5.0] - 2026-11-19
 ### Changed
 - Redesigned the Home page: top navigation bar, hero section, two-column layout (videos + friends/invites), polished cards and hover effects.
